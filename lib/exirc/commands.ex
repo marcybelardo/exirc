@@ -213,6 +213,20 @@ defmodule ExIRC.Commands do
   def who!(channel), do: command! ['WHO ', channel]
 
   @doc """
+  Manage IRC capabilities
+  """
+  def cap!(type, args \\ "") do
+    case type do
+      :ls   -> case "#{args}" |> String.length do
+        0 -> command! ['CAP LS']
+        _ -> command! ['CAP LS ', args]
+      end
+      :list -> command! ['CAP LIST']
+      :req  -> command! ['CAP REQ :', args]
+      :end  -> command! ['CAP END']
+    end
+  end
+  @doc """
   Send password to server
   """
   def pass!(pwd), do: command! ['PASS ', pwd]
@@ -238,10 +252,6 @@ defmodule ExIRC.Commands do
   Send message to channel or user
   """
   def privmsg!(nick, msg), do: command! ['PRIVMSG ', nick, ' :', msg]
-  @doc """
-  Request Twitch capabilities
-  """
-  def cap_req!(msg), do: command! ['CAP REQ :', msg]
   @doc """
   Send a `/me <msg>` CTCP command to t
   """

@@ -23,6 +23,7 @@ defmodule ExIRC.Client do
               name:             "",
               ssl?:             false,
               connected?:       false,
+              capabilities:     [],
               logged_on?:       false,
               autoping:         true,
               channel_prefixes: "",
@@ -94,6 +95,20 @@ defmodule ExIRC.Client do
   @spec is_connected?(client :: pid) :: true | false
   def is_connected?(client) do
     GenServer.call(client, :is_connected?)
+  end
+  @doc """
+  Interact with capabilities from server
+  Subcommand types are:
+    :ls
+    :list
+    :req
+    :end
+
+  Example:
+    Client.cap pid, :req, ["multi-prefix", "sasl"]
+  """
+  def cap(client, type, capabilities) do
+    GenServer.call(client, {:cap, type, capabilities}, :infinity)
   end
   @doc """
   Logon to a server
@@ -363,6 +378,11 @@ defmodule ExIRC.Client do
   # Prevents any of the following messages from being handled if the client is not connected to a server.
   # Instead, it returns {:error, :not_connected}.
   def handle_call(_, _from, %ClientState{connected?: false} = state), do: {:reply, {:error, :not_connected}, state}
+  # Handle call to request capabilities from IRC server
+  def handle_call({:cap, type, args}, _from, %ClientState{connected?: true, logged_on?: false} = state) do
+    Transport.send state, cap!(type, args)
+    {:reply, :ok, state}
+  end
   # Handle call to login to the connected IRC server
   def handle_call({:logon, pass, nick, user, name}, _from, %ClientState{logged_on?: false} = state) do
     Transport.send state, pass!(pass)
