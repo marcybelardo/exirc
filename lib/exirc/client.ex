@@ -508,6 +508,7 @@ defmodule ExIRC.Client do
       socket:     nil,
       connected?: false,
       logged_on?: false,
+      capabilities: [],
       channels:   Channels.init()
     }
     {:noreply, new_state}
@@ -526,6 +527,7 @@ defmodule ExIRC.Client do
       socket:     nil,
       connected?: false,
       logged_on?: false,
+      capabilities: [],
       channels:   Channels.init()
     }
     {:stop, {:tcp_error, socket}, new_state}
@@ -606,6 +608,10 @@ defmodule ExIRC.Client do
   def handle_data(%ExIRC.Message{cmd: @rpl_isupport} = msg, state) do
     if state.debug?, do: debug "RECEIVING SERVER CAPABILITIES"
     {:noreply, Utils.isup(msg.args, state)}
+  end
+  # Called when the server replies to client capability requests
+  def handle_data(%ExIRC.Message{cmd: "CAP"} = msg, state) do
+    
   end
   # Called when the client enters a channel
 
