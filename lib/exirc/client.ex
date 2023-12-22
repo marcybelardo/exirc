@@ -407,7 +407,6 @@ defmodule ExIRC.Client do
       :privmsg -> privmsg!(nick, msg)
       :notice  -> notice!(nick, msg)
       :ctcp    -> notice!(nick, ctcp!(msg))
-      :cap_req -> cap_req!(msg)
     end
     Transport.send state, data
     {:reply, :ok, state}
