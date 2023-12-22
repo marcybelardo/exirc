@@ -46,7 +46,7 @@ defmodule ExIRC.Utils do
   end
 
   # Parse command from message
-  defp get_cmd([cmd, arg1, [?:, 1 | ctcp_trail] | restargs], msg) when cmd == 'PRIVMSG' or cmd == 'NOTICE' or cmd == 'CAP' do
+  defp get_cmd([cmd, arg1, [?:, 1 | ctcp_trail] | restargs], msg) when cmd == 'PRIVMSG' or cmd == 'NOTICE' do
     get_cmd([cmd, arg1, [1 | ctcp_trail] | restargs], msg)
   end
 

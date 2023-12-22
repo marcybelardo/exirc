@@ -610,8 +610,9 @@ defmodule ExIRC.Client do
     {:noreply, Utils.isup(msg.args, state)}
   end
   # Called when the server replies to client capability requests
-  def handle_data(%ExIRC.Message{cmd: "CAP"} = msg, state) do
-    
+  def handle_data(%ExIRC.Message{cmd: "CAP", args: [args]} = msg, state) do
+    if state.debug?, do: debug "CAPABILITY NEGOTIATION"
+    {:noreply, state}
   end
   # Called when the client enters a channel
 
